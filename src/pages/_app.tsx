@@ -1,15 +1,17 @@
-import { ChakraProvider, ColorModeScript } from '@chakra-ui/react'
+import { ChakraProvider, ColorModeScript } from '@chakra-ui/react';
 import { SidebarProvider } from '../contexts/SidebarContext';
 
-import type { AppProps } from 'next/app'
+import type { AppProps } from 'next/app';
 
-import theme from '../theme'
+import Favicon from '../components/Favicon';
+import theme from '../theme';
 
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
 
     <ChakraProvider>
+      <Favicon />
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <SidebarProvider>
         <Component {...pageProps} />
