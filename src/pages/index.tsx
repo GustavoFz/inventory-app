@@ -17,17 +17,20 @@ import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import api from "../services/api";
 import { GroupPops } from "./group";
+import { SubgroupPops } from "./subgroup";
 
 export interface ProductPops {
   id: string;
   name: string;
-  groupId: string;
+  subgroupId: string;
 }
 
 const Produtos = () => {
   const [name, setName] = useState("");
   const [groupId, setGroup_id] = useState("0");
+  const [subgroupId, setSubgroup_id] = useState("0");
   const [listGroups, setListGroups] = useState<GroupPops[]>([]);
+  const [listSubgroups, setListSubgroups] = useState<SubgroupPops[]>([]);
   const [listProducts, setListProducts] = useState<ProductPops[]>([]);
 
   useEffect(() => {
@@ -40,6 +43,10 @@ const Produtos = () => {
       .then((response) => setListGroups(response.data))
       .catch((error) => console.log(error));
 
+    api.get('/subgroup')
+      .then((response) => setListSubgroups(response.data))
+      .catch((error) => console.log(error));
+
   }, []);
 
   const handleNewProduct = () => {
@@ -49,10 +56,10 @@ const Produtos = () => {
       return;
     }
 
-    api.post('/product', { name, groupId })
+    api.post('/product', { name, subgroupId })
       .then((response => setListProducts([...listProducts, response.data])))
       .catch((error) => {
-        console.log({ status: "cocorro", error, data: { name, groupId } });
+        console.log({ status: "socorro", error, data: { name, subgroupId } });
       });
     /*
         if (groupId === "0") {
@@ -95,8 +102,13 @@ const Produtos = () => {
     })
   };
 
-  const getGroupById = (id: string) => {
-    return listGroups.filter((item: GroupPops) => item.id === id)[0]?.name;
+  const getGroupBySubgroupId = (id: string) => {
+    const groupId = listSubgroups.filter((subgrupo: SubgroupPops) => subgrupo.id === id)[0]?.groupId;
+    return listGroups.filter((grupo: GroupPops) => grupo.id === groupId)[0]?.name;
+  };
+
+  const getSubgroupById = (id: string) => {
+    return listSubgroups.filter((item: SubgroupPops) => item.id === id)[0]?.name;
   };
 
   return (
@@ -122,6 +134,15 @@ const Produtos = () => {
                   {item.name}</option>
               ))}
             </Select>
+            <Select
+              value={subgroupId}
+              onChange={(e) => setSubgroup_id(e.target.value)}>
+              <option value="0">Selecione um subgrupo</option>
+              {listSubgroups.map((item, i) => (
+                <option key={i} value={item.id}>
+                  {item.name}</option>
+              ))}
+            </Select>
             <Button w="40" onClick={handleNewProduct}>
               CADASTRAR
             </Button>
@@ -137,6 +158,9 @@ const Produtos = () => {
                   <Th fontWeight="bold" fontSize="14px">
                     Grupo
                   </Th>
+                  <Th fontWeight="bold" fontSize="14px">
+                    Subgrupo
+                  </Th>
                   <Th></Th>
                 </Tr>
               </Thead>
@@ -144,7 +168,8 @@ const Produtos = () => {
                 {listProducts.map((item, i) => (
                   <Tr key={i}>
                     <Td color="gray.500">{item.name}</Td>
-                    <Td color="gray.500">{getGroupById(item.groupId)}</Td>
+                    <Td color="gray.500">{getGroupBySubgroupId(item.subgroupId)}</Td>
+                    <Td color="gray.500">{getSubgroupById(item.subgroupId)}</Td>
                     <Td textAlign="end">
                       <Button
                         p="2"

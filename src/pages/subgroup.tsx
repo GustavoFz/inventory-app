@@ -50,9 +50,9 @@ const Produtos = () => {
         }
 
         api.post('/subgroup', { name, groupId })
-            .then((response => setListSubgroup([...listGroups, response.data])))
+            .then((response => setListSubgroup([...listSubgroups, response.data])))
             .catch((error) => {
-                console.log({ status: "cocorro", error, data: { name, groupId } });
+                console.log({ status: "socorro", error, data: { name, groupId } });
             });
 
         setName("");
@@ -86,8 +86,8 @@ const Produtos = () => {
         }
     };
 
-    const getSubgroupById = (id: string) => {
-        return listSubgroups.filter((item: SubgroupPops) => item.id === id)[0]?.name;
+    const getGroupById = (id: string) => {
+        return listGroups.filter((item: GroupPops) => item.id === id)[0]?.name;
     };
 
     return (
@@ -135,7 +135,7 @@ const Produtos = () => {
                                 {listSubgroups.map((item, i) => (
                                     <Tr key={i}>
                                         <Td color="gray.500">{item.name}</Td>
-                                        <Td color="gray.500">{getSubgroupById(item.groupId)}</Td>
+                                        <Td color="gray.500">{getGroupById(item.groupId)}</Td>
                                         <Td textAlign="end">
                                             <Button
                                                 p="2"
