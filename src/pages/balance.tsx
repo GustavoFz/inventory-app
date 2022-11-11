@@ -47,7 +47,7 @@ function Balance() {
             return;
         }
         const newArray = cmbProducts.filter(
-            (item) => item.productId === productFiltered
+            (item: BalancePops) => item.productId === productFiltered
         );
 
         setListProducts(newArray);
@@ -69,7 +69,7 @@ function Balance() {
                             <option value="">Selecione um item</option>
                             {cmbProducts &&
                                 cmbProducts.length > 0 &&
-                                cmbProducts.map((item, i) => (
+                                cmbProducts.map((item: BalancePops, i) => (
                                     <option key={i} value={item.productId}>
                                         {item.productName}
                                     </option>
