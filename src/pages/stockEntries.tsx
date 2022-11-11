@@ -24,12 +24,19 @@ export interface EntrieProps {
     value: string
     productId: string
 }
+export interface ProductWithSubgroupPops extends ProductPops {
+    subgroup: {
+        id: string,
+        name: string,
+        groupI: string
+    }
+}
 
 const StockEntries = () => {
     const [value, setAmount] = useState("");
     const [product_id, setProduct_id] = useState("0");
     const [listStockEntries, setStockEntries] = useState<EntrieProps[]>([]);
-    const [listProducts, setListProducts] = useState<ProductPops[]>([]);
+    const [listProducts, setListProducts] = useState<ProductWithSubgroupPops[]>([]);
 
     const transactionType = "entrada"
 
@@ -38,7 +45,7 @@ const StockEntries = () => {
             .then((response) => setStockEntries(response.data))
             .catch((error) => console.log(error));
 
-        api.get('/product')
+        api.get('/productWithSubgroup')
             .then((response) => setListProducts(response.data))
             .catch((error) => console.log(error));
 
@@ -87,7 +94,7 @@ const StockEntries = () => {
                                 listProducts.length > 0 &&
                                 listProducts.map((item, i) => (
                                     <option key={i} value={item.id}>
-                                        {item.name}
+                                        {item.name} - {item.subgroup.name}
                                     </option>
                                 ))}
                         </Select>
