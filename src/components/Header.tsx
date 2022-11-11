@@ -1,20 +1,15 @@
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import {
-    Avatar,
     Box,
-    Button,
     Flex,
     HStack,
     Icon,
     IconButton,
-    Image,
-    Text,
-    useBreakpointValue,
-    useColorMode,
+    Image, useBreakpointValue,
+    useColorMode
 } from "@chakra-ui/react";
-import { MoonIcon, PhoneIcon, SunIcon } from '@chakra-ui/icons'
-import React from "react";
-import { useSidebarContext } from "../contexts/SidebarContext";
 import { FiMenu } from "react-icons/fi";
+import { useSidebarContext } from "../contexts/SidebarContext";
 
 const Header = () => {
     const isMobile = useBreakpointValue({
@@ -46,7 +41,8 @@ const Header = () => {
                     onClick={onOpen}
                     variant="unstyled"
                     fontSize="20"
-                    mr="2" aria-label={""}                ></IconButton>
+                    mr="2" aria-label={""}
+                ></IconButton>
             )}
 
             <Box maxW="90px" >
@@ -62,10 +58,10 @@ const Header = () => {
                         icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
                     />
                 </HStack>
-                <HStack>
+                {/* <HStack>
                     <Text>Gustavo Franco</Text>
                     <Avatar size="md" name="Gustavo Franco" />
-                </HStack>
+                </HStack> */}
             </Flex>
         </Flex>
     );
