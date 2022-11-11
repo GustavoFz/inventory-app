@@ -59,10 +59,10 @@ const Produtos = () => {
     const removeGroup = async (id: string) => {
         try {
 
-            const { data } = await api.get('productsByGroup/' + id)
+            const { data } = await api.get('/subgroupByGroup/' + id)
 
             if (data.length) {
-                alert("Esse grupo está vinclado a um produto!");
+                alert("Esse grupo está vinclado a um subgrupo!");
                 return;
             }
             api.delete('/group/' + id)
