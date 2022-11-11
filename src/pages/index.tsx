@@ -16,22 +16,26 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import api from "../services/api";
+import { BrandPops } from "./brand";
 import { GroupPops } from "./group";
 import { SubgroupPops } from "./subgroup";
 
 export interface ProductPops {
   id: string;
   name: string;
+  brandId?: string;
   subgroupId: string;
 }
 
 const Produtos = () => {
   const [name, setName] = useState("");
+  const [brandId, setBrand_id] = useState("0");
   const [groupId, setGroup_id] = useState("0");
   const [subgroupId, setSubgroup_id] = useState("0");
   const [listGroups, setListGroups] = useState<GroupPops[]>([]);
   const [listSubgroups, setListSubgroups] = useState<SubgroupPops[]>([]);
   const [listProducts, setListProducts] = useState<ProductPops[]>([]);
+  const [listBrands, setListBrands] = useState<BrandPops[]>([]);
 
   useEffect(() => {
 
@@ -47,6 +51,10 @@ const Produtos = () => {
       .then((response) => setListSubgroups(response.data))
       .catch((error) => console.log(error));
 
+    api.get('/brand')
+      .then((response) => setListBrands(response.data))
+      .catch((error) => console.log(error));
+
   }, []);
 
   const handleNewProduct = () => {
@@ -56,10 +64,10 @@ const Produtos = () => {
       return;
     }
 
-    api.post('/product', { name, subgroupId })
+    api.post('/product', { name, brandId, subgroupId })
       .then((response => setListProducts([...listProducts, response.data])))
       .catch((error) => {
-        console.log({ status: "socorro", error, data: { name, subgroupId } });
+        console.log({ status: "socorro", error, data: { name, brandId, subgroupId } });
       });
     /*
         if (groupId === "0") {
@@ -111,6 +119,13 @@ const Produtos = () => {
     return listSubgroups.filter((item: SubgroupPops) => item.id === id)[0]?.name;
   };
 
+  const getBrandById = (id: string) => {
+    if (id === undefined) {
+      return ''
+    }
+    return listBrands.filter((item: BrandPops) => item.id === id)[0]?.name;
+  };
+
   return (
     <Flex h="100vh" flexDirection="column">
       <Header />
@@ -126,6 +141,15 @@ const Produtos = () => {
               placeholder="Nome do produto"
             />
             <Select
+              value={brandId}
+              onChange={(e) => setBrand_id(e.target.value)}>
+              <option value="0">Selecione uma Marca</option>
+              {listBrands.map((item, i) => (
+                <option key={i} value={item.id}>
+                  {item.name}</option>
+              ))}
+            </Select>
+            <Select
               value={groupId}
               onChange={(e) => setGroup_id(e.target.value)}>
               <option value="0">Selecione um grupo</option>
@@ -135,6 +159,7 @@ const Produtos = () => {
               ))}
             </Select>
             <Select
+              disabled={groupId === '0' ? true : false}
               value={subgroupId}
               onChange={(e) => setSubgroup_id(e.target.value)}>
               <option value="0">Selecione um subgrupo</option>
@@ -143,7 +168,12 @@ const Produtos = () => {
                   {item.name}</option>
               ))}
             </Select>
-            <Button w="40" onClick={handleNewProduct}>
+            <Button
+              disabled={(subgroupId === '0' || groupId === '0' || name === '') ? true : false}
+              w="40"
+              onClick={handleNewProduct}
+
+            >
               CADASTRAR
             </Button>
           </SimpleGrid>
@@ -154,6 +184,9 @@ const Produtos = () => {
                 <Tr>
                   <Th fontWeight="bold" fontSize="14px">
                     Nome
+                  </Th>
+                  <Th fontWeight="bold" fontSize="14px">
+                    Marca
                   </Th>
                   <Th fontWeight="bold" fontSize="14px">
                     Grupo
@@ -168,6 +201,7 @@ const Produtos = () => {
                 {listProducts.map((item, i) => (
                   <Tr key={i}>
                     <Td color="gray.500">{item.name}</Td>
+                    <Td color="gray.500">{getBrandById(item.brandId as string)}</Td>
                     <Td color="gray.500">{getGroupBySubgroupId(item.subgroupId)}</Td>
                     <Td color="gray.500">{getSubgroupById(item.subgroupId)}</Td>
                     <Td textAlign="end">
@@ -189,7 +223,7 @@ const Produtos = () => {
           </Box>
         </Box>
       </Flex>
-    </Flex>
+    </Flex >
   );
 };
 export default Produtos;

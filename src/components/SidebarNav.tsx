@@ -25,6 +25,19 @@ const SidebarNav = () => {
                             </Text>
                         </ChakraLink>
                     </Link>
+                    <Link href="/brand">
+                        <ChakraLink
+                            _hover={{ bg: "gray.100" }}
+                            px="4"
+                            py="2"
+                            borderRadius={5}
+                            bg={asPath === "/brand" ? "gray.200" : ""}
+                        >
+                            <Text fontSize="md" fontWeight="medium" color="gray.500">
+                                MARCAS
+                            </Text>
+                        </ChakraLink>
+                    </Link>
                     <Link href="/group">
                         <ChakraLink
                             _hover={{ bg: "gray.100" }}
