@@ -113,7 +113,10 @@ const Produtos = () => {
                                     {item.name}</option>
                             ))}
                         </Select>
-                        <Button w="40" onClick={handleNewSubgroup}>
+                        <Button
+                            disabled={(groupId === '0' || name === '') ? true : false}
+                            w="40"
+                            onClick={handleNewSubgroup}>
                             CADASTRAR
                         </Button>
                     </SimpleGrid>
