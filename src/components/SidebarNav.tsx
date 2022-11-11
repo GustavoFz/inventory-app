@@ -1,4 +1,3 @@
-import React from "react";
 import { Link as ChakraLink, Stack, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -36,6 +35,19 @@ const SidebarNav = () => {
                         >
                             <Text fontSize="md" fontWeight="medium" color="gray.500">
                                 GRUPOS
+                            </Text>
+                        </ChakraLink>
+                    </Link>
+                    <Link href="/subgroup">
+                        <ChakraLink
+                            _hover={{ bg: "gray.100" }}
+                            px="4"
+                            py="2"
+                            borderRadius={5}
+                            bg={asPath === "/subgroup" ? "gray.200" : ""}
+                        >
+                            <Text fontSize="md" fontWeight="medium" color="gray.500">
+                                SUBGRUPOS
                             </Text>
                         </ChakraLink>
                     </Link>
