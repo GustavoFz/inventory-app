@@ -2,14 +2,17 @@ import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import {
     Avatar,
     Box,
+    Button,
     Flex,
     HStack,
     Icon,
     IconButton,
-    Image, Text, useBreakpointValue,
+    Image, Menu, MenuButton, MenuDivider, MenuGroup, MenuItem, MenuList, Text, useBreakpointValue,
     useColorMode
 } from "@chakra-ui/react";
-import { useContext } from 'react';
+import Router from 'next/router';
+import { parseCookies } from 'nookies';
+import { useContext, useEffect } from 'react';
 import { FiMenu } from "react-icons/fi";
 import { AuthContext } from '../contexts/AuthContext';
 import { useSidebarContext } from "../contexts/SidebarContext";
@@ -24,7 +27,16 @@ const Header = () => {
 
     const { colorMode, toggleColorMode } = useColorMode()
 
-    const { user } = useContext(AuthContext)
+    const { user, logout } = useContext(AuthContext)
+
+    useEffect(() => {
+
+        const { ['inventory-token']: token } = parseCookies()
+
+        if (!token) {
+            Router.push('/login')
+        }
+    }, [])
 
     return (
         <Flex
@@ -65,7 +77,22 @@ const Header = () => {
                 </HStack>
                 <HStack>
                     <Text>{user?.name}</Text>
-                    <Avatar size="md" name="Gustavo Franco" />
+                    <Menu>
+
+                        <MenuButton>
+                            <Avatar size="md" name={user?.name} />
+                        </MenuButton>
+                        <MenuList>
+                            <MenuGroup title='Profile'>
+                                <MenuItem>My Account</MenuItem>
+                                <MenuItem>Payments </MenuItem>
+                            </MenuGroup>
+                            <MenuDivider />
+                            <MenuItem onClick={logout} >Logout</MenuItem>
+                        </MenuList>
+                    </Menu>
+
+                    <Button onClick={logout} >sair </Button>
                 </HStack>
             </Flex>
         </Flex>

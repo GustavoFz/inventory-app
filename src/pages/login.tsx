@@ -1,16 +1,14 @@
 import {
     Box,
-    Button,
-    Checkbox,
-    Container, FormControl,
+    Button, Container, FormControl,
     FormLabel,
-    Heading,
-    HStack,
-    Input,
+    Heading, Input,
     Stack, useBreakpointValue,
     useColorModeValue
 } from '@chakra-ui/react'
-import { useContext } from 'react'
+import Router from 'next/router'
+import { parseCookies } from 'nookies'
+import { useContext, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Logo } from '../components/Logo'
 import { AuthContext } from '../contexts/AuthContext'
@@ -19,6 +17,13 @@ const Login = () => {
 
     const { register, handleSubmit } = useForm();
     const { signIn } = useContext(AuthContext)
+
+    useEffect(() => {
+        const { ['inventory-token']: token } = parseCookies()
+        if (token) {
+            Router.push('/')
+        }
+    }, [])
 
     async function handleSignIn(data: any) {
         await signIn(data);
@@ -31,7 +36,7 @@ const Login = () => {
                     <Logo />
                     <Stack spacing={{ base: '2', md: '3' }} textAlign="center">
                         <Heading size={useBreakpointValue({ base: 'xs', md: 'sm' })}>
-                            Log in to your account
+                            Bem vindo ao Inventario do T.I
                         </Heading>
                     </Stack>
                 </Stack>
@@ -48,16 +53,16 @@ const Login = () => {
                                 <FormLabel htmlFor="email">Email</FormLabel>
                                 <Input {...register('email')} id="email" type="email" />
 
-                                <FormLabel htmlFor="email">Password</FormLabel>
+                                <FormLabel htmlFor="email">Senha</FormLabel>
                                 <Input {...register('password')} id="password" type="password" />
                             </FormControl>
                         </Stack>
-                        <HStack justify="space-between">
+                        {/* <HStack justify="space-between">
                             <Checkbox defaultChecked>Remember me</Checkbox>
                             <Button variant="link" colorScheme="blue" size="sm">
                                 Forgot password?
                             </Button>
-                        </HStack>
+                        </HStack> */}
                         <Stack spacing="6">
                             <Button onClick={handleSubmit(handleSignIn)} bg="gray.700" variant="primary">Sign in</Button>
                         </Stack>

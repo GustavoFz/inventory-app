@@ -1,5 +1,5 @@
 import Router from "next/router";
-import { parseCookies, setCookie } from "nookies";
+import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { createContext, useEffect, useState } from "react";
 import api from "../services/api";
 
@@ -28,8 +28,9 @@ interface UserTokenProps {
 
 interface AuthContextProps {
     isAuthenticated: boolean,
-    user: UserProps,
+    user: UserProps | null,
     signIn: (data: SignInProps) => Promise<void>,
+    logout: () => void
 }
 
 export const AuthContext = createContext({} as AuthContextProps)
@@ -44,7 +45,6 @@ export function AuthProvider({ children }: any) {
         if (token) {
             api.get('/userByToken/' + token).then(response => {
                 setUser(response.data)
-                console.log(response)
             })
         }
     }, []);
@@ -56,13 +56,23 @@ export function AuthProvider({ children }: any) {
             maxAge: 60 * 60 * 1, // 1 hour
         })
 
+        api.defaults.headers['Authorization'] = `Bearer ${data.token}`
+
         setUser(data.user)
 
         Router.push('/balance')
     }
 
+    async function logout() {
+
+        api.defaults.headers['Authorization'] = ''
+
+        destroyCookie(undefined, 'inventory-token')
+        Router.push('/login')
+    }
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, signIn }}>
+        <AuthContext.Provider value={{ isAuthenticated, user, signIn, logout }}>
             {children}
         </AuthContext.Provider>
     )
