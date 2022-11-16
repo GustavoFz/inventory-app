@@ -21,7 +21,7 @@ export interface BrandPops {
     name: string;
 }
 
-const Produtos = () => {
+const Brand = () => {
     const [name, setName] = useState("");
     const [brandId, setBrand_id] = useState("0");
     const [listBrands, setListBrand] = useState<BrandPops[]>([]);
@@ -142,4 +142,4 @@ const Produtos = () => {
         </Flex>
     );
 };
-export default Produtos;
+export default Brand;

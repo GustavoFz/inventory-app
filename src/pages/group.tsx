@@ -22,7 +22,7 @@ export interface GroupPops {
     name: string;
 }
 
-const Produtos = () => {
+const Group = () => {
     const [name, setName] = useState("");
     const [listGroups, setListGroup] = useState<GroupPops[]>([]);
 
@@ -135,4 +135,4 @@ const Produtos = () => {
         </Flex>
     );
 };
-export default Produtos;
+export default Group;

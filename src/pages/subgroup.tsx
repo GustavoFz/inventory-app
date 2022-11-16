@@ -24,7 +24,7 @@ export interface SubgroupPops {
     groupId: string;
 }
 
-const Produtos = () => {
+const Subgroup = () => {
     const [name, setName] = useState("");
     const [groupId, setGroup_id] = useState("0");
     const [listSubgroups, setListSubgroup] = useState<SubgroupPops[]>([]);
@@ -161,4 +161,4 @@ const Produtos = () => {
         </Flex>
     );
 };
-export default Produtos;
+export default Subgroup;
