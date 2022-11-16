@@ -4,6 +4,7 @@ import { SidebarProvider } from '../contexts/SidebarContext';
 import type { AppProps } from 'next/app';
 
 import Favicon from '../components/Favicon';
+import { AuthProvider } from '../contexts/AuthContext';
 import theme from '../theme';
 
 
@@ -13,10 +14,13 @@ function MyApp({ Component, pageProps }: AppProps) {
     <ChakraProvider>
       <Favicon />
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-      <SidebarProvider>
-        <Component {...pageProps} />
-      </SidebarProvider>
+      <AuthProvider>
+        <SidebarProvider>
+          <Component {...pageProps} />
+        </SidebarProvider>
+      </AuthProvider>
     </ChakraProvider>
+
   );
 }
 

@@ -1,14 +1,17 @@
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import {
+    Avatar,
     Box,
     Flex,
     HStack,
     Icon,
     IconButton,
-    Image, useBreakpointValue,
+    Image, Text, useBreakpointValue,
     useColorMode
 } from "@chakra-ui/react";
+import { useContext } from 'react';
 import { FiMenu } from "react-icons/fi";
+import { AuthContext } from '../contexts/AuthContext';
 import { useSidebarContext } from "../contexts/SidebarContext";
 
 const Header = () => {
@@ -20,6 +23,8 @@ const Header = () => {
     const { onOpen }: any = useSidebarContext();
 
     const { colorMode, toggleColorMode } = useColorMode()
+
+    const { user } = useContext(AuthContext)
 
     return (
         <Flex
@@ -58,10 +63,10 @@ const Header = () => {
                         icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
                     />
                 </HStack>
-                {/* <HStack>
-                    <Text>Gustavo Franco</Text>
+                <HStack>
+                    <Text>{user?.name}</Text>
                     <Avatar size="md" name="Gustavo Franco" />
-                </HStack> */}
+                </HStack>
             </Flex>
         </Flex>
     );
