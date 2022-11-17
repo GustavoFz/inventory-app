@@ -24,7 +24,8 @@ export interface ProductPops {
   id: string;
   name: string;
   brandId?: string;
-  subgroupId: string;
+  subgroupId?: string;
+  groupId?: string;
 }
 
 const Produtos = () => {
@@ -64,10 +65,10 @@ const Produtos = () => {
       return;
     }
 
-    api.post('/product', { name, brandId, subgroupId })
+    api.post('/product', { name, brandId, subgroupId, groupId })
       .then((response => setListProducts([...listProducts, response.data])))
       .catch((error) => {
-        console.log({ status: "socorro", error, data: { name, brandId, subgroupId } });
+        console.log({ status: "socorro", error, data: { name, brandId, subgroupId, groupId } });
       });
     /*
         if (groupId === "0") {
@@ -115,14 +116,18 @@ const Produtos = () => {
     return listGroups.filter((grupo: GroupPops) => grupo.id === groupId)[0]?.name;
   };
 
-  const getSubgroupById = (id: string) => {
+  const getSubgroupById = (id: string | undefined) => {
     return listSubgroups.filter((item: SubgroupPops) => item.id === id)[0]?.name;
   };
 
-  const getBrandById = (id: string) => {
-    if (id === undefined) {
-      return ''
+  const getGroupById = (id: string | undefined) => {
+    if (!id) {
+      return ""
     }
+    return listGroups.filter((item: GroupPops) => item.id === id)[0]?.name;
+  };
+
+  const getBrandById = (id: string) => {
     return listBrands.filter((item: BrandPops) => item.id === id)[0]?.name;
   };
 
@@ -202,7 +207,7 @@ const Produtos = () => {
                   <Tr key={i}>
                     <Td color="gray.500">{item.name}</Td>
                     <Td color="gray.500">{getBrandById(item.brandId as string)}</Td>
-                    <Td color="gray.500">{getGroupBySubgroupId(item.subgroupId)}</Td>
+                    <Td color="gray.500">{getGroupById(item.groupId)}</Td>
                     <Td color="gray.500">{getSubgroupById(item.subgroupId)}</Td>
                     <Td textAlign="end">
                       <Button
