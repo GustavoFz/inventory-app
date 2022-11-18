@@ -4,10 +4,8 @@ import { createContext, useEffect, useState } from "react";
 import api from "../services/api";
 
 interface SignInProps {
-
     email: string,
     password: string,
-
 }
 
 interface UserProps {
