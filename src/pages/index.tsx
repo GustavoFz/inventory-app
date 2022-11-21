@@ -39,7 +39,6 @@ const Produtos = () => {
   const [listBrands, setListBrands] = useState<BrandPops[]>([]);
 
   useEffect(() => {
-
     api.get('/product')
       .then((response) => setListProducts(response.data))
       .catch((error) => console.log(error));
@@ -55,7 +54,6 @@ const Produtos = () => {
     api.get('/brand')
       .then((response) => setListBrands(response.data))
       .catch((error) => console.log(error));
-
   }, []);
 
   const handleNewProduct = () => {
@@ -64,7 +62,6 @@ const Produtos = () => {
       alert("Produto já cadastrado!");
       return;
     }
-
     api.post('/product', { name, brandId, subgroupId, groupId })
       .then((response => setListProducts([...listProducts, response.data])))
       .catch((error) => {
@@ -88,10 +85,8 @@ const Produtos = () => {
           setListProducts([{ id, name, groupId }]);
         }
     */
-
     setName("");
   };
-
   const verifyProductName = () => {
     return !!listProducts.find((prod) => prod.name === name);
   };
@@ -134,10 +129,8 @@ const Produtos = () => {
   return (
     <Flex h="100vh" flexDirection="column">
       <Header />
-
       <Flex w="100%" my="6" maxW={1120} mx="auto" px="6" h="100vh">
         <Sidebar />
-
         <Box w="100%">
           <SimpleGrid minChildWidth={240} h="fit-content" spacing="6">
             <Input
@@ -177,12 +170,10 @@ const Produtos = () => {
               disabled={(subgroupId === '0' || groupId === '0' || name === '') ? true : false}
               w="40"
               onClick={handleNewProduct}
-
             >
               CADASTRAR
             </Button>
           </SimpleGrid>
-
           <Box overflowY="auto" height="80vh">
             <Table mt="6">
               <Thead>

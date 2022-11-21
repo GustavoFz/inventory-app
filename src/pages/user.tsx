@@ -9,10 +9,12 @@ import {
     Td,
     Th,
     Thead,
-    Tr
+    Tr,
+    useDisclosure
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
+import ModalEdit from "../components/Modal";
 import Sidebar from "../components/Sidebar";
 import api from "../services/api";
 
@@ -28,6 +30,10 @@ const User = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [listUsers, setUsersList] = useState<UserProps[]>([]);
+
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [data, setData] = useState([])
+    const [dataEdit, setDataEdit] = useState({})
 
     useEffect(() => {
 
@@ -128,6 +134,7 @@ const User = () => {
                                         Email
                                     </Th>
                                     <Th></Th>
+                                    <Th></Th>
                                 </Tr>
                             </Thead>
                             <Tbody>
@@ -136,6 +143,16 @@ const User = () => {
                                         <Td color="gray.500">{item.name}</Td>
                                         <Td color="gray.500">{item.email}</Td>
                                         <Td textAlign="end">
+                                            <Button
+                                                p="2"
+                                                h="auto"
+                                                fontSize={11}
+                                                color="red.500"
+                                                fontWeight="bold"
+                                                onClick={() => [setDataEdit(item), onOpen()]}
+                                            >
+                                                EDITAR
+                                            </Button>
                                             <Button
                                                 p="2"
                                                 h="auto"
@@ -154,6 +171,16 @@ const User = () => {
                     </Box>
                 </Box>
             </Flex>
+            {isOpen && (
+                <ModalEdit
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    data={data}
+                    setData={setData}
+                    dataEdit={dataEdit}
+
+                />
+            )}
         </Flex>
     );
 };

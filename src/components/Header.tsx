@@ -1,13 +1,18 @@
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import {
     Avatar,
-    Box,
-    Button,
-    Flex,
+    Box, Flex,
     HStack,
     Icon,
     IconButton,
-    Image, Menu, MenuButton, MenuDivider, MenuGroup, MenuItem, MenuList, Text, useBreakpointValue,
+    Image,
+    Menu,
+    MenuButton,
+    MenuDivider,
+    MenuItem,
+    MenuList,
+    Text,
+    useBreakpointValue,
     useColorMode
 } from "@chakra-ui/react";
 import Router from 'next/router';
@@ -61,11 +66,9 @@ const Header = () => {
                     mr="2" aria-label={""}
                 ></IconButton>
             )}
-
             <Box maxW="90px" >
                 <Image src='/logo.png' />
             </Box>
-
             <Flex ml="auto">
                 <HStack mr='5'>
                     <IconButton
@@ -78,25 +81,18 @@ const Header = () => {
                 <HStack>
                     <Text>{user?.name}</Text>
                     <Menu>
-
                         <MenuButton>
-                            <Avatar size="md" name={user?.name} />
+                            <Avatar size="md" />
                         </MenuButton>
                         <MenuList>
-                            <MenuGroup title='Profile'>
-                                <MenuItem>My Account</MenuItem>
-                                <MenuItem>Payments </MenuItem>
-                            </MenuGroup>
+                            <MenuItem>Configurações</MenuItem>
                             <MenuDivider />
                             <MenuItem onClick={logout} >Logout</MenuItem>
                         </MenuList>
                     </Menu>
-
-                    <Button onClick={logout} >sair </Button>
                 </HStack>
             </Flex>
         </Flex>
     );
 };
-
 export default Header;
