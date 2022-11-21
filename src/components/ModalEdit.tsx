@@ -10,21 +10,35 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay
-} from "@chakra-ui/react"
-import React, { useState } from "react"
+} from "@chakra-ui/react";
+import React, { useState } from "react";
+import api from "../services/api";
 
-const ModalEdit = ({ data, dataEdit, setData, isOpen, onClose }) => {
+const ModalEdit = ({ dataEdit, isOpen, onClose, listUsers, setUsersList }) => {
     const [name, setName] = useState(dataEdit.name || "")
     const [email, setEmail] = useState(dataEdit.email || "")
 
     const initialRef = React.useRef(null)
 
     const handleSave = () => {
-        if (!name || !email) return
-
-        if (Object.keys(dataEdit).length) {
-            data[dataEdit.index] = { name, email }
+        if (!name || !email) {
+            return
         }
+
+        api.put('/user/' + dataEdit.id, { name, email })
+            .then((response => {
+                const newArray = listUsers.map(user => {
+                    if (user.id === response.data.user.id) {
+                        return { ...user, name: response.data.user.name, email: response.data.user.email }
+                    }
+                    return user
+                });
+                setUsersList(newArray);
+            }))
+            .catch((error) => {
+                console.log({ status: "socorro", error });
+            });
+        return
     }
 
     return (
@@ -37,12 +51,12 @@ const ModalEdit = ({ data, dataEdit, setData, isOpen, onClose }) => {
                 <ModalBody pb={6}>
                     <FormControl>
                         <FormLabel>Nome</FormLabel>
-                        <Input type="text" value={dataEdit.name} ref={initialRef} placeholder='Joaozinho' />
+                        <Input type="text" value={name} ref={initialRef} placeholder='Joaozinho' onChange={(e) => setName(e.target.value)} />
                     </FormControl>
 
                     <FormControl mt={4}>
                         <FormLabel>Email</FormLabel>
-                        <Input type="text" value={dataEdit.email} placeholder='Exemplo: teste@teste.com' />
+                        <Input type="text" value={email} placeholder='Exemplo: teste@teste.com' onChange={(e) => setEmail(e.target.value)} />
                     </FormControl>
                 </ModalBody>
 

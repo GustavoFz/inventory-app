@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
-import ModalEdit from "../components/Modal";
+import ModalEdit from "../components/ModalEdit";
 import Sidebar from "../components/Sidebar";
 import api from "../services/api";
 
@@ -32,7 +32,6 @@ const User = () => {
     const [listUsers, setUsersList] = useState<UserProps[]>([]);
 
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [data, setData] = useState([])
     const [dataEdit, setDataEdit] = useState({})
 
     useEffect(() => {
@@ -144,6 +143,7 @@ const User = () => {
                                         <Td color="gray.500">{item.email}</Td>
                                         <Td textAlign="end">
                                             <Button
+                                                margin="1"
                                                 p="2"
                                                 h="auto"
                                                 fontSize={11}
@@ -153,7 +153,9 @@ const User = () => {
                                             >
                                                 EDITAR
                                             </Button>
+
                                             <Button
+                                                margin="1"
                                                 p="2"
                                                 h="auto"
                                                 fontSize={11}
@@ -175,10 +177,9 @@ const User = () => {
                 <ModalEdit
                     isOpen={isOpen}
                     onClose={onClose}
-                    data={data}
-                    setData={setData}
                     dataEdit={dataEdit}
-
+                    listUsers={listUsers}
+                    setUsersList={setUsersList}
                 />
             )}
         </Flex>

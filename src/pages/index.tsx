@@ -2,9 +2,12 @@ import {
   Box,
   Button,
   Flex,
+  FormControl,
+  FormLabel,
   Input,
   Select,
   SimpleGrid,
+  Switch,
   Table,
   Tbody,
   Td,
@@ -23,9 +26,11 @@ import { SubgroupPops } from "./subgroup";
 export interface ProductPops {
   id: string;
   name: string;
+  groupId: string;
+  controlSerialNumber: boolean;
   brandId?: string;
   subgroupId?: string;
-  groupId?: string;
+  barCode?: string;
 }
 
 const Produtos = () => {
@@ -33,10 +38,15 @@ const Produtos = () => {
   const [brandId, setBrand_id] = useState("0");
   const [groupId, setGroup_id] = useState("0");
   const [subgroupId, setSubgroup_id] = useState("0");
+  const [barCode, setBarCode] = useState("0");
+  const [serialNumber, setSerialNumber] = useState("0");
+  const [controlSN, setControlSN] = useState(false);
   const [listGroups, setListGroups] = useState<GroupPops[]>([]);
   const [listSubgroups, setListSubgroups] = useState<SubgroupPops[]>([]);
   const [listProducts, setListProducts] = useState<ProductPops[]>([]);
   const [listBrands, setListBrands] = useState<BrandPops[]>([]);
+
+
 
   useEffect(() => {
     api.get('/product')
@@ -62,10 +72,10 @@ const Produtos = () => {
       alert("Produto já cadastrado!");
       return;
     }
-    api.post('/product', { name, brandId, subgroupId, groupId })
+    api.post('/product', { name, brandId, subgroupId, groupId, barCode, controlSN })
       .then((response => setListProducts([...listProducts, response.data])))
       .catch((error) => {
-        console.log({ status: "socorro", error, data: { name, brandId, subgroupId, groupId } });
+        console.log({ status: "socorro", error, data: { name, brandId, subgroupId, groupId, barCode, controlSN } });
       });
     /*
         if (groupId === "0") {
@@ -132,7 +142,7 @@ const Produtos = () => {
       <Flex w="100%" my="6" maxW={1120} mx="auto" px="6" h="100vh">
         <Sidebar />
         <Box w="100%">
-          <SimpleGrid minChildWidth={240} h="fit-content" spacing="6">
+          <FormControl as={SimpleGrid} minChildWidth={240} h="fit-content" spacing="6">
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -166,6 +176,17 @@ const Produtos = () => {
                   {item.name}</option>
               ))}
             </Select>
+            <FormLabel htmlFor='isChecked' >
+              Controla S/N?
+              <Switch marginLeft='2' id='isChecked' onChange={() => setControlSN(!controlSN)} />
+            </FormLabel>
+            {controlSN ?
+              <Input
+                value={serialNumber}
+                onChange={(e) => setSerialNumber(e.target.value)}
+                placeholder="Nome do produto"
+              />
+              : ""}
             <Button
               disabled={(subgroupId === '0' || groupId === '0' || name === '') ? true : false}
               w="40"
@@ -173,7 +194,7 @@ const Produtos = () => {
             >
               CADASTRAR
             </Button>
-          </SimpleGrid>
+          </FormControl>
           <Box overflowY="auto" height="80vh">
             <Table mt="6">
               <Thead>
