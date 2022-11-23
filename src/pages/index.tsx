@@ -2,21 +2,17 @@ import {
   Box,
   Button,
   Flex,
-  FormControl,
-  FormLabel,
-  Input,
-  Select,
-  SimpleGrid,
-  Switch,
   Table,
   Tbody,
   Td,
   Th,
   Thead,
-  Tr
+  Tr,
+  useDisclosure
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
+import ModalProduct from "../components/ModalProduct";
 import Sidebar from "../components/Sidebar";
 import api from "../services/api";
 import { BrandPops } from "./brand";
@@ -34,19 +30,14 @@ export interface ProductPops {
 }
 
 const Produtos = () => {
-  const [name, setName] = useState("");
-  const [brandId, setBrand_id] = useState("0");
-  const [groupId, setGroup_id] = useState("0");
-  const [subgroupId, setSubgroup_id] = useState("0");
-  const [barCode, setBarCode] = useState("0");
-  const [serialNumber, setSerialNumber] = useState("0");
-  const [controlSN, setControlSN] = useState(false);
+
   const [listGroups, setListGroups] = useState<GroupPops[]>([]);
   const [listSubgroups, setListSubgroups] = useState<SubgroupPops[]>([]);
   const [listProducts, setListProducts] = useState<ProductPops[]>([]);
   const [listBrands, setListBrands] = useState<BrandPops[]>([]);
 
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [data, setData] = useState({})
 
   useEffect(() => {
     api.get('/product')
@@ -66,41 +57,6 @@ const Produtos = () => {
       .catch((error) => console.log(error));
   }, []);
 
-  const handleNewProduct = () => {
-    if (!name) return;
-    if (verifyProductName()) {
-      alert("Produto já cadastrado!");
-      return;
-    }
-    api.post('/product', { name, brandId, subgroupId, groupId, barCode, controlSN })
-      .then((response => setListProducts([...listProducts, response.data])))
-      .catch((error) => {
-        console.log({ status: "socorro", error, data: { name, brandId, subgroupId, groupId, barCode, controlSN } });
-      });
-    /*
-        if (groupId === "0") {
-          return alert("Selecione um grupo!");
-        }
-    
-        if (listProducts && listProducts.length) {
-          localStorage.setItem(
-            "db_products",
-            JSON.stringify([...listProducts, { id, name, groupId }])
-          );
-    
-          setListProducts([...listProducts, { id, name, groupId }]);
-        } else {
-          localStorage.setItem("db_products", JSON.stringify([{ id, name, groupId }]));
-    
-          setListProducts([{ id, name, groupId }]);
-        }
-    */
-    setName("");
-  };
-  const verifyProductName = () => {
-    return !!listProducts.find((prod) => prod.name === name);
-  };
-
   const removeProduct = async (id: string) => {
 
     const transaction = await api.get('/transaction/' + id)
@@ -114,11 +70,6 @@ const Produtos = () => {
       const newArray = listProducts.filter((prod) => prod.id !== response.data.id);
       setListProducts(newArray)
     })
-  };
-
-  const getGroupBySubgroupId = (id: string) => {
-    const groupId = listSubgroups.filter((subgrupo: SubgroupPops) => subgrupo.id === id)[0]?.groupId;
-    return listGroups.filter((grupo: GroupPops) => grupo.id === groupId)[0]?.name;
   };
 
   const getSubgroupById = (id: string | undefined) => {
@@ -142,59 +93,11 @@ const Produtos = () => {
       <Flex w="100%" my="6" maxW={1120} mx="auto" px="6" h="100vh">
         <Sidebar />
         <Box w="100%">
-          <FormControl as={SimpleGrid} minChildWidth={240} h="fit-content" spacing="6">
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nome do produto"
-            />
-            <Select
-              value={brandId}
-              onChange={(e) => setBrand_id(e.target.value)}>
-              <option value="0">Selecione uma Marca</option>
-              {listBrands.map((item, i) => (
-                <option key={i} value={item.id}>
-                  {item.name}</option>
-              ))}
-            </Select>
-            <Select
-              value={groupId}
-              onChange={(e) => setGroup_id(e.target.value)}>
-              <option value="0">Selecione um grupo</option>
-              {listGroups.map((item, i) => (
-                <option key={i} value={item.id}>
-                  {item.name}</option>
-              ))}
-            </Select>
-            <Select
-              disabled={groupId === '0' ? true : false}
-              value={subgroupId}
-              onChange={(e) => setSubgroup_id(e.target.value)}>
-              <option value="0">Selecione um subgrupo</option>
-              {listSubgroups.map((item, i) => (
-                <option key={i} value={item.id}>
-                  {item.name}</option>
-              ))}
-            </Select>
-            <FormLabel htmlFor='isChecked' >
-              Controla S/N?
-              <Switch marginLeft='2' id='isChecked' onChange={() => setControlSN(!controlSN)} />
-            </FormLabel>
-            {controlSN ?
-              <Input
-                value={serialNumber}
-                onChange={(e) => setSerialNumber(e.target.value)}
-                placeholder="Nome do produto"
-              />
-              : ""}
-            <Button
-              disabled={(subgroupId === '0' || groupId === '0' || name === '') ? true : false}
-              w="40"
-              onClick={handleNewProduct}
-            >
-              CADASTRAR
-            </Button>
-          </FormControl>
+          <Button
+            w="40"
+            onClick={onOpen}>
+            CADASTRAR
+          </Button>
           <Box overflowY="auto" height="80vh">
             <Table mt="6">
               <Thead>
@@ -228,6 +131,18 @@ const Produtos = () => {
                         fontSize={11}
                         color="red.500"
                         fontWeight="bold"
+                        onClick={() => { setData(item), onOpen() }}
+                      >
+                        EDITAR
+                      </Button>
+                    </Td>
+                    <Td textAlign="end">
+                      <Button
+                        p="2"
+                        h="auto"
+                        fontSize={11}
+                        color="red.500"
+                        fontWeight="bold"
                         onClick={() => removeProduct(item.id)}
                       >
                         DELETAR
@@ -240,6 +155,18 @@ const Produtos = () => {
           </Box>
         </Box>
       </Flex>
+      {isOpen && (
+        <ModalProduct
+          isOpen={isOpen}
+          onClose={onClose}
+          data={data}
+          listProducts={listProducts}
+          setListProducts={setListProducts}
+          listBrands={listBrands}
+          listGroups={listGroups}
+          listSubgroups={listSubgroups}
+        />
+      )}
     </Flex >
   );
 };
