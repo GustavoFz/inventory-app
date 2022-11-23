@@ -24,6 +24,7 @@ export interface ProductPops {
   name: string;
   groupId: string;
   controlSerialNumber: boolean;
+  serialNumber: string;
   brandId?: string;
   subgroupId?: string;
   barCode?: string;
@@ -38,10 +39,11 @@ const Produtos = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [data, setData] = useState({})
+  const [typeModal, setTypeModal] = useState("")
 
   useEffect(() => {
     api.get('/product')
-      .then((response) => setListProducts(response.data))
+      .then((response) => { setListProducts(response.data), console.log(response.data) })
       .catch((error) => console.log(error));
 
     api.get('/group')
@@ -95,7 +97,7 @@ const Produtos = () => {
         <Box w="100%">
           <Button
             w="40"
-            onClick={onOpen}>
+            onClick={() => { onOpen(), setTypeModal("create") }}>
             CADASTRAR
           </Button>
           <Box overflowY="auto" height="80vh">
@@ -115,6 +117,7 @@ const Produtos = () => {
                     Subgrupo
                   </Th>
                   <Th></Th>
+                  <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -124,6 +127,7 @@ const Produtos = () => {
                     <Td color="gray.500">{getBrandById(item.brandId as string)}</Td>
                     <Td color="gray.500">{getGroupById(item.groupId)}</Td>
                     <Td color="gray.500">{getSubgroupById(item.subgroupId)}</Td>
+                    <Td color="gray.500">{JSON.stringify(item.item)}</Td>
                     <Td textAlign="end">
                       <Button
                         p="2"
@@ -131,7 +135,7 @@ const Produtos = () => {
                         fontSize={11}
                         color="red.500"
                         fontWeight="bold"
-                        onClick={() => { setData(item), onOpen() }}
+                        onClick={() => { setData(item), setTypeModal("edit"), onOpen() }}
                       >
                         EDITAR
                       </Button>
@@ -165,6 +169,7 @@ const Produtos = () => {
           listBrands={listBrands}
           listGroups={listGroups}
           listSubgroups={listSubgroups}
+          typeModal={typeModal}
         />
       )}
     </Flex >

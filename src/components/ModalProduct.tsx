@@ -12,21 +12,24 @@ import {
     ModalOverlay,
     Select,
     SimpleGrid,
-    Switch
+    Switch,
+    useToast
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import api from "../services/api";
 
-const ModalProduct = ({ data, isOpen, onClose, listProducts, setListProducts, listGroups, listSubgroups, listBrands }) => {
+const ModalProduct = ({ data, isOpen, onClose, typeModal, listProducts, setListProducts, listGroups, listSubgroups, listBrands }) => {
     const [name, setName] = useState(data?.name || "")
     const [brandId, setBrand_id] = useState(data?.brandId || "0");
     const [groupId, setGroup_id] = useState(data?.groupId || "0");
     const [subgroupId, setSubgroup_id] = useState(data?.subgroupId || "0");
-    const [barCode, setBarCode] = useState();
-    const [serialNumber, setSerialNumber] = useState();
-    const [controlSN, setControlSN] = useState(false);
+    const [barCode, setBarCode] = useState(data?.barCode || "");
+    const [serialNumber, setSerialNumber] = useState(data?.item?.id || "");
+    const [controlSerialNumber, setControlSerialNumber] = useState(data?.controlSerialNumber || false);
 
     const initialRef = React.useRef(null)
+
+    const toast = useToast()
 
     const verifyProductName = () => {
         return !!listProducts.find((prod) => prod.name === name);
@@ -38,10 +41,25 @@ const ModalProduct = ({ data, isOpen, onClose, listProducts, setListProducts, li
             alert("Produto já cadastrado!");
             return;
         }
-        api.post('/product', { name, brandId, subgroupId, groupId, barCode, controlSN })
-            .then((response => setListProducts([...listProducts, response.data])))
+        api.post('/product', { name, brandId, subgroupId, groupId, barCode, controlSerialNumber, serialNumber })
+            .then((response => {
+                setListProducts([...listProducts, response.data])
+                toast({
+                    title: 'Produto cadastrado com sucesso!',
+                    status: 'success',
+                    duration: 4000,
+                    isClosable: true,
+                })
+            }))
             .catch((error) => {
-                console.log({ status: "socorro", error, data: { name, brandId, subgroupId, groupId, barCode, controlSN } });
+                toast({
+                    title: 'Erro ao cadastrar produto!',
+                    description: error.message,
+                    status: 'error',
+                    duration: 4000,
+                    isClosable: true,
+                })
+                console.log({ status: "socorro", error, data: { name, brandId, subgroupId, groupId, barCode, controlSerialNumber } });
             });
         setName("");
     };
@@ -65,9 +83,22 @@ const ModalProduct = ({ data, isOpen, onClose, listProducts, setListProducts, li
                     return product
                 });
                 setListProducts(newArray);
+                toast({
+                    title: 'Produto atualizado com sucesso!',
+                    status: 'success',
+                    duration: 4000,
+                    isClosable: true,
+                })
             }))
             .catch((error) => {
                 console.log({ status: "socorro", error });
+                toast({
+                    title: 'Erro ao atualizar produto!',
+                    description: error.message,
+                    status: 'error',
+                    duration: 4000,
+                    isClosable: true,
+                })
             });
         return
     }
@@ -77,7 +108,7 @@ const ModalProduct = ({ data, isOpen, onClose, listProducts, setListProducts, li
         <Modal isOpen={isOpen} onClose={onClose} initialFocusRef={initialRef}>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Editar produto</ModalHeader>
+                <ModalHeader>{typeModal === "edit" ? "Editar" : "Cadastrar"} Produto</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
                     <FormControl as={SimpleGrid} minChildWidth={240} h="fit-content" spacing="6">
@@ -124,9 +155,9 @@ const ModalProduct = ({ data, isOpen, onClose, listProducts, setListProducts, li
                         />
                         <FormLabel htmlFor='isChecked' >
                             Controla S/N?
-                            <Switch marginLeft='2' id='isChecked' onChange={() => setControlSN(!controlSN)} />
+                            <Switch marginLeft='2' id='isChecked' isChecked={controlSerialNumber ? true : false} onChange={() => setControlSerialNumber(!controlSerialNumber)} />
                         </FormLabel>
-                        {controlSN ?
+                        {controlSerialNumber ?
                             <Input
                                 value={serialNumber}
                                 onChange={(e) => setSerialNumber(e.target.value)}
@@ -136,8 +167,8 @@ const ModalProduct = ({ data, isOpen, onClose, listProducts, setListProducts, li
                     </FormControl>
                 </ModalBody>
                 <ModalFooter>
-                    <Button colorScheme='blue' mr={3} onClick={handleCreate} disabled={(subgroupId === '0' || groupId === '0' || name === '') ? true : false}>
-                        Save
+                    <Button colorScheme='blue' mr={3} onClick={typeModal === "edit" ? handleEdit : handleCreate} disabled={(subgroupId === '0' || groupId === '0' || name === '') ? true : false}>
+                        {typeModal === "edit" ? "atualizar" : "cadastrar"}
                     </Button>
                     <Button onClick={onClose}>Cancel</Button>
                 </ModalFooter>
