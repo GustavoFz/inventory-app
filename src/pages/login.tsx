@@ -3,6 +3,7 @@ import {
     Button, Container, FormControl,
     FormLabel,
     Heading, Input,
+    Spinner,
     Stack, useBreakpointValue,
     useColorModeValue
 } from '@chakra-ui/react'
@@ -16,7 +17,7 @@ import { AuthContext } from '../contexts/AuthContext'
 const Login = () => {
 
     const { register, handleSubmit } = useForm();
-    const { signIn } = useContext(AuthContext)
+    const { signIn, isAuthenticated } = useContext(AuthContext)
 
     useEffect(() => {
         const { ['inventory-token']: token } = parseCookies()
@@ -66,6 +67,12 @@ const Login = () => {
                         <Stack spacing="6">
                             <Button onClick={handleSubmit(handleSignIn)} bg="gray.700" variant="primary">Sign in</Button>
                         </Stack>
+                        {isAuthenticated ?
+                            <Stack alignItems="center">
+                                <Spinner justifyContent='center' />
+                            </Stack>
+                            : ""
+                        }
                     </Stack>
                 </Box>
             </Stack>
